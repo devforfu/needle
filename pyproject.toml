@@ -10,6 +10,8 @@ dynamic = ["version"]
 name = "needle"
 requires-python = ">=3.9"
 
+[project.optional-dependencies]
+test = ["pytest"]
+
 [tool.setuptools_scm]
 write_to = "needle/_version.py"
-
