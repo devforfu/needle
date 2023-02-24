@@ -7,6 +7,7 @@ from needle import Search
 
 @dataclass
 class TestCase:
+    __test__ = False
     obj: Any
     expected: list[str]
     name: str
@@ -50,7 +51,32 @@ TEST_SUIT = [
             "task.n_classes",
             "version"
         ],
-        name="containers"
+        name="heterogeneous containers",
+    ),
+    TestCase(
+        obj={"one": {"two": {"three": 1}}},
+        expected=["one.two.three"],
+        name="nested dict",
+    ),
+    TestCase(
+        obj=["one", "two", "three"],
+        expected=["[0]", "[1]", "[2]"],
+        name="one level list",
+    ),
+    TestCase(
+        obj=[[["one"]], ["two"], "three", []],
+        expected=["[0][0][0]", "[1][0]", "[2]"],
+        name="nested list"
+    ),
+    TestCase(
+        obj=(((1,), (2,), (3, 4)), (5,)),
+        expected=["[0][0][0]", "[0][1][0]", "[0][2][0]", "[0][2][1]", "[1][0]"],
+        name="nested tuple",
+    ),
+    TestCase(
+        obj={},
+        expected=[],
+        name="empty",
     )
 ]
 

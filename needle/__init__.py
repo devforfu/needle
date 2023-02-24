@@ -10,7 +10,7 @@ class Search:
     def __post_init__(self):
         self._cache = self.flatten()
 
-    def flatten(self):
+    def flatten(self) -> list[str]:
 
         def _flatten(node: Any, parent: str) -> list[str]:
             if atomic(node):
