@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import pytest
-from needle import Search
+from needle import Search, parse_key
 
 
 @dataclass
@@ -82,5 +82,22 @@ TEST_SUIT = [
 
 
 @pytest.mark.parametrize("test_case", TEST_SUIT, ids=[t.name for t in TEST_SUIT])
-def test_search(test_case: TestCase) -> None:
+def test_flat_keys(test_case: TestCase) -> None:
     assert Search(test_case.obj).flat_keys == test_case.expected
+
+
+@pytest.mark.parametrize("key,expected", [
+    ("one.two.three", ["one", "two", "three"]),
+    ("[0][1][2]", [0, 1, 2]),
+    ("x[1].y[2].z", ["x", 1, "y", 2, "z"]),
+    ("x.y.z[0]", ["x", "y", "z", 0]),
+    ("pipeline.train.datasets[1].path", ["pipeline", "train", "datasets", 1, "path"])
+])
+def test_parse_key(key: str, expected: list) -> None:
+    assert parse_key(key) == expected
+
+
+@pytest.mark.parametrize("key", ["obj[key]", "obj[[1]]"])
+def test_parse_key_fails_on_wrong_format(key: str) -> None:
+    with pytest.raises(ValueError):
+        parse_key(key)

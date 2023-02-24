@@ -39,3 +39,32 @@ class Search:
 
 def atomic(obj: Any) -> bool:
     return isinstance(obj, (int, float, bool, str)) or obj is None
+
+
+def parse_key(key: str) -> list[str | int]:
+    str_key, int_key = "", ""
+    digit = False
+    parts = []
+    for ch in key:
+        if ch == ".":
+            if str_key:
+                parts.append(str_key)
+            str_key = ""
+        elif ch == "[":
+            if str_key:
+                parts.append(str_key)
+            str_key = ""
+            digit = True
+        elif ch == "]":
+            parts.append(int(int_key))
+            int_key = ""
+            digit = False
+        elif digit:
+            if not ch.isdigit():
+                raise ValueError(f"cannot parse key: {key}")
+            int_key += ch
+        else:
+            str_key += ch
+    if str_key:
+        parts.append(str_key)
+    return parts
