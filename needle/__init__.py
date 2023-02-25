@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -5,10 +6,17 @@ from typing import Any
 @dataclass
 class Search:
     obj: Any
-    _cache: list[str] = field(init=False, default_factory=list)
+    _cache: list[str] = field(default_factory=list)
 
-    def __post_init__(self):
-        self._cache = self.flatten()
+    @property
+    def flat_keys(self) -> list[str]:
+        return list(self._cache)
+
+    @staticmethod
+    def create(obj: Any, cache: list[str] | None = None) -> Search:
+        search = Search(obj)
+        search._cache = search.flatten() if cache is None else cache
+        return search
 
     def flatten(self) -> list[str]:
 
@@ -32,9 +40,14 @@ class Search:
 
         return [k.strip(".") for k in _flatten(self.obj, "")]
 
-    @property
-    def flat_keys(self) -> list[str]:
-        return list(self._cache)
+    def get(self, key: str) -> Any:
+        node = self.obj
+        for part in parse_key(key):
+            node = node[part]
+        return node
+
+    def find(self, suffix: str) -> list[str]:
+        return [key for key in self._cache if suffix in key]
 
 
 def atomic(obj: Any) -> bool:
