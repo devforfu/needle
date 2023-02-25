@@ -7,7 +7,6 @@ class Search:
     def __init__(self, obj: Any, cache: list[str] | None = None) -> Search:
         self.obj = obj
         self._cache = self.flatten() if cache is None else cache
-        self._stack = [self.obj]
 
     @property
     def flat_keys(self) -> list[str]:
@@ -43,6 +42,11 @@ class Search:
 
     def find(self, suffix: str) -> list[str]:
         return [key for key in self._cache if suffix in key]
+
+    def subsearch(self, prefix: str) -> Search:
+        node = self.get(prefix)
+        cache = [key.removeprefix(prefix).strip(".") for key in self._cache if key.startswith(prefix)]
+        return Search(node, cache)
 
 
 def atomic(obj: Any) -> bool:

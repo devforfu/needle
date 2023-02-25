@@ -127,3 +127,49 @@ def test_find() -> None:
     search = Search({}, ["train.batch_size", "valid.batch_size", "model_name"])
     keys = search.find("batch_size")
     assert keys == ["train.batch_size", "valid.batch_size"]
+
+
+def test_subsearch_gets_relative_key() -> None:
+    search = Search({
+        "train": {
+            "batch_size": 64,
+        },
+        "valid": {
+            "batch_size": 128,
+        }
+    })
+
+    assert search.subsearch("train").get("batch_size") == 64
+    assert search.subsearch("valid").get("batch_size") == 128
+
+
+def test_subsearch_reduces_keys_range() -> None:
+    search = Search({
+        "pipeline": {
+            "steps": ["preprocess", "train", "evaluate", "inference"],
+            "datasets": {
+                "train": "/drive/data/train.pkl",
+                "valid": "/drive/data/valid.pkl",
+            }
+        }
+    })
+
+    subsearch = search.subsearch("pipeline.datasets")
+
+    assert subsearch.flat_keys == ["train", "valid"]
+
+
+def test_subsearch_does_not_copy_obj() -> None:
+    search = Search({
+        "training": {
+            "dataset": "/drive/data",
+            "params": {
+                "lr": 1e-3,
+                "opt": "SGD",
+            }
+        }
+    })
+
+    subsearch = search.subsearch("training.params")
+
+    assert search.get("training.params") is subsearch.obj
