@@ -97,7 +97,7 @@ TEST_SUIT = [
 
 @pytest.mark.parametrize("test_case", TEST_SUIT, ids=[t.name for t in TEST_SUIT])
 def test_flat_keys(test_case: TestCase) -> None:
-    assert Search.create(test_case.obj).flat_keys == list(test_case.expected)
+    assert Search(test_case.obj).flat_keys == list(test_case.expected)
 
 
 @pytest.mark.parametrize("key,expected", [
@@ -124,6 +124,6 @@ def test_get_key(test_case: TestCase) -> None:
 
 
 def test_find() -> None:
-    search = Search.create({}, ["train.batch_size", "valid.batch_size", "model_name"])
+    search = Search({}, ["train.batch_size", "valid.batch_size", "model_name"])
     keys = search.find("batch_size")
     assert keys == ["train.batch_size", "valid.batch_size"]

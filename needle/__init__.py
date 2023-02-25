@@ -7,16 +7,11 @@ class Search:
     def __init__(self, obj: Any, cache: list[str] | None = None) -> Search:
         self.obj = obj
         self._cache = self.flatten() if cache is None else cache
+        self._stack = [self.obj]
 
     @property
     def flat_keys(self) -> list[str]:
         return list(self._cache)
-
-    @staticmethod
-    def create(obj: Any, cache: list[str] | None = None) -> Search:
-        search = Search(obj)
-        search._cache = search.flatten() if cache is None else cache
-        return search
 
     def flatten(self) -> list[str]:
 
