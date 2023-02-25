@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import pytest
-from needle import Search, parse_key
+from needle.search import Search, parse_key
 
 
 @dataclass
