@@ -5,13 +5,18 @@ from typing import Any
 
 class Search:
 
-    def __init__(self, obj: Any, cache: list[str] | None = None) -> Search:
+    def __init__(self, obj: Any, cache: list[str] | None = None, prefix: str | None = None) -> Search:
         self.obj = obj
         self._cache = self.flatten() if cache is None else cache
+        self._prefix = prefix
 
     @property
     def flat_keys(self) -> list[str]:
         return list(self._cache)
+
+    @property
+    def prefix(self) -> str:
+        return self._prefix or ""
 
     def flatten(self) -> list[str]:
 
@@ -47,7 +52,7 @@ class Search:
     def subsearch(self, prefix: str) -> Search:
         node = self.get(prefix)
         cache = [key.removeprefix(prefix).strip(".") for key in self._cache if key.startswith(prefix)]
-        return Search(node, cache)
+        return Search(node, cache, prefix)
 
 
 def atomic(obj: Any) -> bool:
