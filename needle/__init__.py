@@ -1,12 +1,12 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
 from typing import Any
 
 
-@dataclass
 class Search:
-    obj: Any
-    _cache: list[str] = field(default_factory=list)
+
+    def __init__(self, obj: Any, cache: list[str] | None = None) -> Search:
+        self.obj = obj
+        self._cache = self.flatten() if cache is None else cache
 
     @property
     def flat_keys(self) -> list[str]:
