@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import IO, Protocol
+from typing import Any, IO, Protocol
 
 import rich.console
 import rich.prompt
@@ -21,11 +21,11 @@ class Device(Protocol):
 
 class RichDevice(Device):
 
-    def __init__(self, output: IO[str]) -> None:
+    def __init__(self, output: IO[str] | None = None) -> None:
         self.console = rich.console.Console(file=output)
 
     def render(self, search: Search) -> None:
-        self.console.print(_create_table(search))
+        self.console.print(create_table(search))
 
     def query(self, prefix: str) -> str:
         return rich.prompt.Prompt.ask(
@@ -34,13 +34,27 @@ class RichDevice(Device):
         )
 
 
-def _create_table(search: Search) -> rich.table.Table:
+def create_table(search: Search) -> rich.table.Table:
     table = rich.table.Table(show_header=True, header_style="bold")
     table.add_column("Key")
     table.add_column("Value")
     for key in search.flat_keys:
-        table.add_row(key, str(search.get(key)))
+        table.add_row(key, format_value(search.get(key)))
     return table
+
+
+def format_value(value: Any) -> str:
+    if isinstance(value, bool):
+        return f"[yellow]{value}[/yellow]"
+    elif isinstance(value, int):
+        return f"[blue]{value}[/blue]"
+    elif isinstance(value, float):
+        return f"[blue]{value:.4f}[/blue]"
+    elif isinstance(value, str):
+        return f"[green]\"{value}\"[/green]"
+    elif value is None:
+        return f"[red]{value}[/red]"
+    return str(value)
 
 
 @dataclass
@@ -65,3 +79,43 @@ class Viewer:
                     stack.append(search.subsearch(new_key))
         except KeyboardInterrupt:
             pass
+
+
+def main() -> None:
+    search = Search({
+        "dataset": {
+            "path": "/drive/dataset",
+            "metadata": "/drive/metadata.json",
+            "stats": ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        },
+        "split": "/drive/split.json",
+        "training": {
+            "model": {
+                "backbone": "resnet18",
+                "head": {
+                    "n_classes": 10
+                },
+                "aux": None
+            },
+            "data_loader": {
+                "batch_size": 128,
+                "num_workers": 8,
+            }
+        },
+        "evaluation": {
+            "data_loader": {
+                "batch_size": 256,
+                "num_workers": 8
+            }
+        },
+        "test": {
+            "dataset": "/data/test",
+            "enabled": True,
+        }
+    })
+    viewer = Viewer(search, RichDevice())
+    viewer.render()
+
+
+if __name__ == '__main__':
+    main()
