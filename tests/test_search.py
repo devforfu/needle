@@ -123,6 +123,12 @@ def test_get_key(test_case: TestCase) -> None:
     assert [search.get(key) for key in test_case.expected] == list(test_case.expected.values())
 
 
+@pytest.mark.parametrize("test_case", TEST_SUIT, ids=[t.name for t in TEST_SUIT])
+def test_getitem_key(test_case: TestCase) -> None:
+    search = Search(test_case.obj)
+    assert [search[key] for key in test_case.expected] == list(test_case.expected.values())
+
+
 def test_find() -> None:
     search = Search({}, ["train.batch_size", "valid.batch_size", "model_name"])
     keys = search.find("batch_size")
@@ -173,3 +179,20 @@ def test_subsearch_does_not_copy_obj() -> None:
     subsearch = search.subsearch("training.params")
 
     assert search.get("training.params") is subsearch.obj
+
+
+def test_max_keys_depth() -> None:
+    search = Search({
+        "A1": {
+            "B1": {
+                "C1": 1,
+            },
+            "B2": {
+                "C2": 2,
+                "C3": 3,
+            },
+            "C4": 1
+        },
+        "X1": 0
+    })
+    search.max_depth(0)

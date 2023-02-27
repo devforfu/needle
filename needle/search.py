@@ -46,6 +46,12 @@ class Search:
             node = node[part]
         return node
 
+    def __getitem__(self, key: str) -> Any:
+        try:
+            return self.get(key)
+        except (KeyError, IndexError):
+            raise KeyError(f"key {key} not found")
+
     def find(self, suffix: str) -> list[str]:
         return [key for key in self._cache if suffix in key]
 
