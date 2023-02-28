@@ -129,6 +129,14 @@ def test_getitem_key(test_case: TestCase) -> None:
     assert [search[key] for key in test_case.expected] == list(test_case.expected.values())
 
 
+def test_getitem_raises_error_if_not_found() -> None:
+    search = Search({"a": 1, "b": [2]})
+    with pytest.raises(KeyError):
+        search["c"]
+    with pytest.raises(KeyError):
+        search["b[1]"]
+
+
 def test_find() -> None:
     search = Search({}, ["train.batch_size", "valid.batch_size", "model_name"])
     keys = search.find("batch_size")
