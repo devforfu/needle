@@ -60,6 +60,14 @@ class Search:
         cache = [key.removeprefix(prefix).strip(".") for key in self._cache if key.startswith(prefix)]
         return Search(node, cache, prefix)
 
+    def max_depth(self, depth: int) -> Search:
+        cache = [key for key in self._cache if key.count(".") <= depth]
+        return Search(self.obj, cache)
+
+    def fixed_depth(self, depth: int) -> Search:
+        cache = [key for key in self._cache if key.count(".") == depth]
+        return Search(self.obj, cache)
+
 
 def atomic(obj: Any) -> bool:
     return isinstance(obj, (int, float, bool, str)) or obj is None

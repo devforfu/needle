@@ -189,7 +189,7 @@ def test_subsearch_does_not_copy_obj() -> None:
     assert search.get("training.params") is subsearch.obj
 
 
-def test_max_keys_depth() -> None:
+def test_max_depth() -> None:
     search = Search({
         "A1": {
             "B1": {
@@ -203,4 +203,27 @@ def test_max_keys_depth() -> None:
         },
         "X1": 0
     })
-    search.max_depth(0)
+
+    assert search.max_depth(0).flat_keys == ["X1"]
+    assert search.max_depth(1).flat_keys == ["A1.C4", "X1"]
+    assert search.max_depth(2).flat_keys == ['A1.B1.C1', 'A1.B2.C2', 'A1.B2.C3', 'A1.C4', 'X1']
+
+
+def test_fixed_depth() -> None:
+    search = Search({
+        "A1": {
+            "B1": {
+                "C1": 1,
+            },
+            "B2": {
+                "C2": 2,
+                "C3": 3,
+            },
+            "C4": 1
+        },
+        "X1": 0
+    })
+
+    assert search.fixed_depth(0).flat_keys == ["X1"]
+    assert search.fixed_depth(1).flat_keys == ["A1.C4"]
+    assert search.fixed_depth(2).flat_keys == ["A1.B1.C1", "A1.B2.C2", "A1.B2.C3"]
