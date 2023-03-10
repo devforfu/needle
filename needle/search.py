@@ -5,9 +5,15 @@ from typing import Any
 
 class Search:
 
-    def __init__(self, obj: Any, cache: list[str] | None = None, prefix: str | None = None) -> Search:
+    def __init__(
+        self,
+        obj: Any,
+        cache: list[str] | None = None,
+        prefix: str | None = None,
+        max_depth: int | None = None,
+    ) -> Search:
         self.obj = obj
-        self._cache = self.flatten() if cache is None else cache
+        self._cache = self.flatten(max_depth) if cache is None else cache
         self._prefix = prefix
 
     @property
@@ -18,27 +24,29 @@ class Search:
     def prefix(self) -> str:
         return self._prefix or ""
 
-    def flatten(self) -> list[str]:
+    def flatten(self, max_depth: int | None) -> list[str]:
 
-        def _flatten(node: Any, parent: str) -> list[str]:
+        def _flatten(node: Any, parent: str, depth: int) -> list[str]:
             if atomic(node):
                 return []
             collected = []
             if isinstance(node, dict):
                 for key, child in node.items():
                     new_key = f"{parent}.{key}"
-                    if atomic(child):
+                    if atomic(child) or (max_depth is not None and depth >= max_depth):
                         collected.append(new_key)
-                    collected.extend(_flatten(child, new_key))
+                    else:
+                        collected.extend(_flatten(child, new_key, depth + 1))
             elif isinstance(node, (list, tuple)):
                 for index, child in enumerate(node):
                     new_key = f"{parent}[{index}]"
-                    if atomic(child):
+                    if atomic(child) or (max_depth is not None and depth >= max_depth):
                         collected.append(new_key)
-                    collected.extend(_flatten(child, new_key))
+                    else:
+                        collected.extend(_flatten(child, new_key, depth + 1))
             return collected
 
-        return [k.strip(".") for k in _flatten(self.obj, "")]
+        return [k.strip(".") for k in _flatten(self.obj, "", 0)]
 
     def get(self, key: str) -> Any:
         node = self.obj
