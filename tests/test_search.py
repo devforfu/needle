@@ -139,8 +139,7 @@ def test_getitem_raises_error_if_not_found() -> None:
 
 def test_find() -> None:
     search = Search({}, ["train.batch_size", "valid.batch_size", "model_name"])
-    keys = search.find("batch_size")
-    assert keys == ["train.batch_size", "valid.batch_size"]
+    assert search.find("batch_size").flat_keys == ["train.batch_size", "valid.batch_size"]
 
 
 def test_subsearch_gets_relative_key() -> None:
@@ -201,12 +200,13 @@ def test_max_depth() -> None:
             },
             "C4": 1
         },
-        "X1": 0
+        "X1": 0,
+        "X2": ['a', 'b', 'c']
     })
 
     assert search.max_depth(0).flat_keys == ["X1"]
-    assert search.max_depth(1).flat_keys == ["A1.C4", "X1"]
-    assert search.max_depth(2).flat_keys == ['A1.B1.C1', 'A1.B2.C2', 'A1.B2.C3', 'A1.C4', 'X1']
+    assert search.max_depth(1).flat_keys == ['A1.C4', 'X1', 'X2[0]', 'X2[1]', 'X2[2]']
+    assert search.max_depth(2).flat_keys == ['A1.B1.C1', 'A1.B2.C2', 'A1.B2.C3', 'A1.C4', 'X1', 'X2[0]', 'X2[1]', 'X2[2]']
 
 
 def test_fixed_depth() -> None:
@@ -221,11 +221,12 @@ def test_fixed_depth() -> None:
             },
             "C4": 1
         },
-        "X1": 0
+        "X1": 0,
+        "X2": ['a', 'b', 'c']
     })
 
     assert search.fixed_depth(0).flat_keys == ["X1"]
-    assert search.fixed_depth(1).flat_keys == ["A1.C4"]
+    assert search.fixed_depth(1).flat_keys == ["A1.C4", "X2[0]", "X2[1]", "X2[2]"]
     assert search.fixed_depth(2).flat_keys == ["A1.B1.C1", "A1.B2.C2", "A1.B2.C3"]
 
 
