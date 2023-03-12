@@ -29,7 +29,7 @@ class RichDevice(Device):
 
     def query(self, prefix: str) -> str:
         return rich.prompt.Prompt.ask(
-            prompt=f"Key ({prefix}):" if prefix else "Key:",
+            prompt=f"Key ({prefix})" if prefix else "Key",
             console=self.console,
         )
 
@@ -75,47 +75,10 @@ class Viewer:
                     stack.pop()
                     stack = Stack(self.search) if stack.empty else stack
                 else:
-                    stack.subsearch(new_key)
+                    try:
+                        stack.subsearch(new_key)
+                    except KeyError:
+                        pass
 
         except KeyboardInterrupt:
             pass
-
-
-def main() -> None:
-    search = Search({
-        "dataset": {
-            "path": "/drive/dataset",
-            "metadata": "/drive/metadata.json",
-            "stats": ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        },
-        "split": "/drive/split.json",
-        "training": {
-            "model": {
-                "backbone": "resnet18",
-                "head": {
-                    "n_classes": 10
-                },
-                "aux": None
-            },
-            "data_loader": {
-                "batch_size": 128,
-                "num_workers": 8,
-            }
-        },
-        "evaluation": {
-            "data_loader": {
-                "batch_size": 256,
-                "num_workers": 8
-            }
-        },
-        "test": {
-            "dataset": "/data/test",
-            "enabled": True,
-        }
-    })
-    viewer = Viewer(search, RichDevice())
-    viewer.render()
-
-
-if __name__ == '__main__':
-    main()
