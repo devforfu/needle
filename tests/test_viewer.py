@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 from needle import Search, Viewer
-from viewer import Device
+from needle.viewer import Device
 
 
 @dataclass
