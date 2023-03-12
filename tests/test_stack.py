@@ -56,3 +56,11 @@ def test_tracking_search_method_calls(stack: Stack, search: Search) -> None:
     assert stack.subsearch("A1").top == search.subsearch("A1")
     assert stack.find("first").top == search.subsearch("A1").find("first")
     assert stack.pop().pop().top == search
+
+
+def test_repr(stack: Stack) -> None:
+    assert repr(stack.subsearch("A1").find("first")) == """Stack(
+\tSearch(prefix="", n_keys=9)
+\tSearch(prefix=A1, n_keys=2)
+\tSearch(prefix=A1, n_keys=1)
+)"""

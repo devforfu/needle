@@ -44,6 +44,11 @@ class Stack:
         self.stack.pop(-1)
         return self
 
+    def __repr__(self) -> str:
+        stack = "\n\t" + "\n\t".join([repr(search) for search in self.stack])
+        return f"Stack({stack}\n)"
+
+
     find = Delegate()
     subsearch = Delegate()
     max_depth = Delegate()

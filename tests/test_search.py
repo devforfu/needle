@@ -233,3 +233,12 @@ def test_fixed_depth() -> None:
 @pytest.mark.parametrize("max_depth,expected_key", [(0, "A"), (1, "A.B"), (2, "A.B.C")])
 def test_depth_limited_search(max_depth: int, expected_key: str) -> None:
     assert Search({"A": {"B": {"C": 1}}}, max_depth=max_depth).flat_keys == [expected_key]
+
+
+def test_str() -> None:
+    expected = {
+        "A.B.C[0]": 1,
+        "A.B.C[1]": 2,
+        "A.B.C[2]": 3,
+    }
+    assert str(Search({"A": {"B": {"C": [1, 2, 3]}}})) == str(expected)

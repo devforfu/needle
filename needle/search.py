@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from pprint import pprint
 
 
 class Search:
@@ -54,6 +55,16 @@ class Search:
 
     def __eq__(self, other: Search) -> bool:
         return self._cache == other._cache and self._prefix == other._prefix
+
+    def pprint(self) -> None:
+        pprint({key: self[key] for key in self._cache})
+
+    def __repr__(self) -> str:
+        prefix = self.prefix or "\"\""
+        return f"Search(prefix={prefix}, n_keys={len(self.flat_keys)})"
+
+    def __str__(self) -> str:
+        return str({key: self[key] for key in self._cache})
 
 
 def _flatten(obj: Any, max_depth: int | None) -> list[str]:
