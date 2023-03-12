@@ -31,7 +31,7 @@ view(obj)                # starts an interactive mode as showed below
 
 ## Showcase
 
-![](docs/quick_example.gif)
+![](https://github.com/devforfu/needle/blob/main/docs/quick_example.gif)
 
 ## Why?
 
