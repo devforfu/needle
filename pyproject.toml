@@ -7,9 +7,10 @@ authors = [{name = "devforfu", email = "developer.z@outlook.com"}]
 classifiers = ["Programming Language :: Python :: 3"]
 description = "A package helping to navigate nested structures easily"
 dynamic = ["version"]
-name = "needle-search"
+name = "python-needle"
 requires-python = ">=3.9"
 dependencies = ["rich"]
+readme = "README.md"
 
 [project.optional-dependencies]
 test = ["pytest"]
