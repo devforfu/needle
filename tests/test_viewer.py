@@ -1,4 +1,3 @@
-import io
 from dataclasses import dataclass, field
 
 from needle import Search, Viewer
