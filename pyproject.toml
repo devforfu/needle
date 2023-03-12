@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 authors = [{name = "devforfu", email = "developer.z@outlook.com"}]
-classifiers = ["Programming Langauge :: Python :: 3"]
+classifiers = ["Programming Language :: Python :: 3"]
 description = "A package helping to navigate nested structures easily"
 dynamic = ["version"]
 name = "needle"
