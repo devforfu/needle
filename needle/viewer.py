@@ -18,6 +18,9 @@ class Device(Protocol):
     def query(self, prefix: str) -> str:
         raise NotImplementedError
 
+    def clear(self) -> None:
+        pass
+
 
 class RichDevice(Device):
 
@@ -32,6 +35,9 @@ class RichDevice(Device):
             prompt=f"Key ({prefix})" if prefix else "Key",
             console=self.console,
         )
+
+    def clear(self) -> None:
+        self.console.clear()
 
 
 def create_table(search: Search) -> rich.table.Table:
@@ -69,6 +75,7 @@ class Viewer:
         stack = Stack(self.search)
         try:
             while True:
+                self.device.clear()
                 self.device.render(stack.top)
                 new_key = self.device.query(stack.top.prefix)
                 if new_key == "..":
