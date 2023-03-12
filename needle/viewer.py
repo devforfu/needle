@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any, IO, Protocol
 
@@ -7,6 +6,7 @@ import rich.console
 import rich.prompt
 import rich.table
 
+from needle.stack import Stack
 from needle.search import Search
 
 
@@ -66,17 +66,17 @@ class Viewer:
         self.device.render(self.search)
 
     def interactive(self) -> None:
-        stack: list[Search] = [self.search]
+        stack = Stack(self.search)
         try:
             while True:
-                search = stack[-1]
-                self.device.render(search)
-                new_key = self.device.query(search.prefix)
+                self.device.render(stack.top)
+                new_key = self.device.query(stack.top.prefix)
                 if new_key == "..":
                     stack.pop()
-                    stack = stack if stack else [self.search]
+                    stack = Stack(self.search) if stack.empty else stack
                 else:
-                    stack.append(search.subsearch(new_key))
+                    stack.subsearch(new_key)
+
         except KeyboardInterrupt:
             pass
 
