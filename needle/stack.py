@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Type
 
-from needle.search import Search
+from needle.search import Search, assemble_key
 
 
 @dataclass
@@ -35,6 +35,10 @@ class Stack:
     @property
     def empty(self) -> bool:
         return not self.stack
+
+    @property
+    def prefix(self) -> str:
+        return assemble_key([s.prefix for s in self.stack])
 
     def push(self, search: Search) -> Stack:
         self.stack.append(search)

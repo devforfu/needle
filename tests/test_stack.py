@@ -64,3 +64,9 @@ def test_repr(stack: Stack) -> None:
 \tSearch(prefix=A1, n_keys=2)
 \tSearch(prefix=A1, n_keys=1)
 )"""
+
+
+def test_prefix(stack: Stack) -> None:
+    stack.subsearch("A2")
+    stack.subsearch("B21")
+    assert stack.prefix == "A2.B21"

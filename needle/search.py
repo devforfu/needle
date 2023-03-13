@@ -281,3 +281,35 @@ def parse_key(key: str) -> list[str | int]:
     if str_key:
         parts.append(str_key)
     return parts
+
+
+def assemble_key(parts: list[str | int]) -> str:
+    """
+
+    Parameters
+    ----------
+    parts
+
+    Returns
+    -------
+
+    Examples
+    --------
+    >>> assemble_key(["one", "two", "three"])
+    'one.two.three'
+    >>> assemble_key([0, 1, 2])
+    '[0][1][2]'
+    >>> assemble_key(["root", "child", 0, "leaf"])
+    'root.child[0].leaf'
+    >>> assemble_key(["root", "child", "[0]", "leaf"])
+    'root.child[0].leaf'
+    """
+    prepared = [""] * len(parts)
+    for i, part in enumerate(parts):
+        if isinstance(part, int):
+            prepared[i] = f"[{part}]"
+        elif part.startswith("[") and part.endswith("]"):
+            prepared[i] = part
+        else:
+            prepared[i] = f".{part}"
+    return "".join(prepared).strip(".")

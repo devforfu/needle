@@ -79,7 +79,7 @@ class Viewer:
                 if self.clear_on_update:
                     self.device.clear()
                 self.device.render(stack.top)
-                new_key = self.device.query(stack.top.prefix)
+                new_key = self.device.query(stack.prefix)
                 if new_key == "..":
                     stack.pop()
                     stack = Stack(self.search) if stack.empty else stack
