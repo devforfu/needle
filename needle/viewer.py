@@ -67,6 +67,7 @@ def format_value(value: Any) -> str:
 class Viewer:
     search: Search
     device: Device
+    clear_on_update: bool = False
 
     def render(self) -> None:
         self.device.render(self.search)
@@ -75,7 +76,8 @@ class Viewer:
         stack = Stack(self.search)
         try:
             while True:
-                self.device.clear()
+                if self.clear_on_update:
+                    self.device.clear()
                 self.device.render(stack.top)
                 new_key = self.device.query(stack.top.prefix)
                 if new_key == "..":
